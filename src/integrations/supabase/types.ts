@@ -129,6 +129,7 @@ export type Database = {
       }
       visits: {
         Row: {
+          body_part: string | null
           cost: number | null
           created_at: string
           deleted_at: string | null
@@ -146,6 +147,7 @@ export type Database = {
           visit_date: string
         }
         Insert: {
+          body_part?: string | null
           cost?: number | null
           created_at?: string
           deleted_at?: string | null
@@ -163,6 +165,7 @@ export type Database = {
           visit_date?: string
         }
         Update: {
+          body_part?: string | null
           cost?: number | null
           created_at?: string
           deleted_at?: string | null
