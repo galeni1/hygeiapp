@@ -9,14 +9,13 @@ import {
   LogOut,
   Moon,
   Sun,
-  Bell,
   Menu,
   Plus,
   LayoutDashboard,
   BarChart3,
-  HandHeart,
-  PartyPopper,
-  Users,
+  Stethoscope,
+  CalendarClock,
+  UserRound,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -35,8 +34,9 @@ interface AppShellProps {
 
 const navItems = [
   { to: "/", label: "Πίνακας ελέγχου", icon: LayoutDashboard },
-  { to: "/events", label: "Εκδηλώσεις μου", icon: PartyPopper },
-  { to: "/given", label: "Δώρα μου", icon: HandHeart },
+  { to: "/visits", label: "Επισκέψεις", icon: Stethoscope },
+  { to: "/appointments", label: "Ραντεβού", icon: CalendarClock },
+  { to: "/doctors", label: "Ιατροί", icon: UserRound },
   { to: "/stats", label: "Στατιστικά", icon: BarChart3 },
   { to: "/settings", label: "Ρυθμίσεις", icon: SettingsIcon },
 ];
@@ -63,10 +63,11 @@ export const AppShell = ({ children, onAddNew }: AppShellProps) => {
         {/* Brand */}
         <Link to="/" className="flex items-center gap-2.5 min-w-0 shrink-0">
           <span
-            className="font-display italic font-semibold leading-none text-[22px] sm:text-[26px] tracking-tight relative -top-[2px]"
-            style={{ color: "hsl(var(--brand-wine))", fontFamily: "'Pacifico', cursive" }}
+            className="font-display font-semibold leading-none text-[20px] sm:text-[22px] tracking-tight flex items-center gap-1.5"
+            style={{ color: "hsl(var(--primary))" }}
           >
-            δωράκια
+            <Stethoscope className="h-5 w-5" />
+            iatrika
           </span>
           <span className="hidden sm:inline-block text-foreground font-semibold text-base ml-2 pl-3 border-l border-border truncate max-w-[200px] leading-none">
             {settings.appName}

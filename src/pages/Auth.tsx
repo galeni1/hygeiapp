@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { APP_VERSION } from '@/lib/version';
-import { Gift, ArrowLeft } from 'lucide-react';
+import { Stethoscope as Gift, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -150,7 +150,7 @@ const Auth = () => {
           <div className="flex justify-center mb-4">
             <Gift className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Διαχείριση Δώρων</CardTitle>
+          <CardTitle className="text-2xl">Ιατρικές Επισκέψεις</CardTitle>
           <CardDescription>
             Συνδεθείτε ή δημιουργήστε λογαριασμό
           </CardDescription>

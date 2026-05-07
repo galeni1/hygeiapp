@@ -1,365 +1,203 @@
-import { useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { format, parseISO, differenceInCalendarDays, isToday, isTomorrow, startOfDay } from "date-fns";
+import { useMemo, useState } from "react";
+import { format } from "date-fns";
 import { el } from "date-fns/locale";
 import {
+  Stethoscope,
   CalendarDays,
-  PartyPopper,
-  HandHeart,
-  Users,
-  Gift as GiftIcon,
-  Euro,
-  ArrowRight,
-  Sparkles,
+  Wallet,
+  TrendingUp,
   Clock,
-  MapPin,
+  Plus,
 } from "lucide-react";
-import { AppShell } from "@/components/AppShell";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useGivenGifts } from "@/hooks/useGivenGifts";
-import { usePersonalEvents } from "@/hooks/usePersonalEvents";
-import { useGifts } from "@/hooks/useGifts";
-import { GivenGift } from "@/types/givenGift";
-import { PersonalEvent } from "@/types/personalEvent";
-import { cn } from "@/lib/utils";
-
-const formatEur = (n: number) =>
-  new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
-
-type UpcomingItem =
-  | {
-      kind: "given";
-      id: string;
-      date: Date;
-      title: string;
-      subtitle: string;
-      eventType: string | null;
-      amount: number | null;
-      raw: GivenGift;
-    }
-  | {
-      kind: "personal";
-      id: string;
-      date: Date;
-      title: string;
-      subtitle: string;
-      eventType: string | null;
-      raw: PersonalEvent;
-    };
-
-const relativeLabel = (date: Date) => {
-  if (isToday(date)) return "Σήμερα";
-  if (isTomorrow(date)) return "Αύριο";
-  const diff = differenceInCalendarDays(date, startOfDay(new Date()));
-  if (diff > 0 && diff < 7) return `Σε ${diff} ημέρες`;
-  if (diff >= 7 && diff < 31) return `Σε ${Math.round(diff / 7)} εβδ.`;
-  if (diff >= 31) return `Σε ${Math.round(diff / 30)} μήνες`;
-  return format(date, "d MMM", { locale: el });
-};
+import { Badge } from "@/components/ui/badge";
+import { AppShell } from "@/components/AppShell";
+import { useVisits } from "@/hooks/useVisits";
+import { useAppointments } from "@/hooks/useAppointments";
+import { useDoctors } from "@/hooks/useDoctors";
+import { VisitFormDialog } from "@/components/VisitFormDialog";
+import { AppointmentFormDialog } from "@/components/AppointmentFormDialog";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const { data: givenGifts = [], isLoading: loadingGiven } = useGivenGifts();
-  const { data: personalEvents = [], isLoading: loadingEvents } = usePersonalEvents();
-  const { data: receivedGifts = [], isLoading: loadingReceived } = useGifts();
+  const { data: visits = [] } = useVisits();
+  const { data: appointments = [] } = useAppointments();
+  const { data: doctors = [] } = useDoctors();
+  const [visitOpen, setVisitOpen] = useState(false);
+  const [apptOpen, setApptOpen] = useState(false);
 
-  const today = startOfDay(new Date());
-
-  const upcoming: UpcomingItem[] = useMemo(() => {
-    const items: UpcomingItem[] = [];
-
-    // Δώρα μου = εκδηλώσεις τρίτων που πρέπει να παρευρεθώ
-    for (const g of givenGifts) {
-      if (g.deleted_at) continue;
-      if (!g.event_date) continue;
-      const d = parseISO(g.event_date);
-      if (d < today) continue;
-      const fullName = [g.surname, g.first_name].filter(Boolean).join(" ").trim() || "—";
-      items.push({
-        kind: "given",
-        id: g.id,
-        date: d,
-        title: `${g.event_type || "Εκδήλωση"} — ${fullName}`,
-        subtitle: [g.relationship, g.village].filter(Boolean).join(" · "),
-        eventType: g.event_type,
-        amount: g.gift_amount,
-        raw: g,
-      });
-    }
-
-    // Δικές μου εκδηλώσεις (μελλοντικές)
-    for (const ev of personalEvents) {
-      if (!ev.event_date) continue;
-      const d = parseISO(ev.event_date);
-      if (d < today) continue;
-      items.push({
-        kind: "personal",
-        id: ev.id,
-        date: d,
-        title: ev.name,
-        subtitle: [ev.event_type, ev.notes].filter(Boolean).join(" · "),
-        eventType: ev.event_type,
-        raw: ev,
-      });
-    }
-
-    return items.sort((a, b) => a.date.getTime() - b.date.getTime());
-  }, [givenGifts, personalEvents, today]);
-
-  // Stats
   const stats = useMemo(() => {
-    const upcomingCount = upcoming.length;
-    const next30 = upcoming.filter((i) => differenceInCalendarDays(i.date, today) <= 30).length;
-    const totalGivenAmount = givenGifts
-      .filter((g) => !g.deleted_at)
-      .reduce((s, g) => s + (g.gift_amount || 0), 0);
-    const totalReceivedAmount = receivedGifts
-      .filter((g) => !g.deleted_at)
-      .reduce((s, g) => s + (g.gift_amount || 0), 0);
-    return { upcomingCount, next30, totalGivenAmount, totalReceivedAmount };
-  }, [upcoming, givenGifts, receivedGifts, today]);
-
-  const isLoading = loadingGiven || loadingEvents || loadingReceived;
-
-  // Group by relative bucket: today / this week / this month / later
-  const groups = useMemo(() => {
-    const g = {
-      today: [] as UpcomingItem[],
-      week: [] as UpcomingItem[],
-      month: [] as UpcomingItem[],
-      later: [] as UpcomingItem[],
+    const now = new Date();
+    const yearStart = new Date(now.getFullYear(), 0, 1);
+    const yearVisits = visits.filter((v) => new Date(v.visit_date) >= yearStart);
+    const totalCost = visits.reduce((s, v) => s + (v.cost || 0), 0);
+    const yearCost = yearVisits.reduce((s, v) => s + (v.cost || 0), 0);
+    return {
+      total: visits.length,
+      yearCount: yearVisits.length,
+      totalCost,
+      yearCost,
     };
-    for (const i of upcoming) {
-      const diff = differenceInCalendarDays(i.date, today);
-      if (diff <= 0) g.today.push(i);
-      else if (diff <= 7) g.week.push(i);
-      else if (diff <= 31) g.month.push(i);
-      else g.later.push(i);
-    }
-    return g;
-  }, [upcoming, today]);
+  }, [visits]);
+
+  const upcoming = useMemo(() => {
+    const now = new Date();
+    return appointments
+      .filter((a) => !a.completed && new Date(a.appointment_date) >= now)
+      .slice(0, 5);
+  }, [appointments]);
+
+  const recentVisits = visits.slice(0, 5);
 
   return (
-    <AppShell>
-      <div className="px-3 sm:px-6 py-4 sm:py-6 max-w-[1400px] mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-end justify-between gap-3 flex-wrap">
-          <div>
-            <p className="text-sm text-muted-foreground capitalize">
-              {format(new Date(), "EEEE, d MMMM yyyy", { locale: el })}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate("/given")} className="gap-1.5">
-              <HandHeart className="w-4 h-4" />
-              <span className="hidden sm:inline">Δώρα μου</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate("/events")} className="gap-1.5">
-              <PartyPopper className="w-4 h-4" />
-              <span className="hidden sm:inline">Εκδηλώσεις μου</span>
-            </Button>
-          </div>
-        </div>
-
+    <AppShell onAddNew={() => setVisitOpen(true)}>
+      <div className="p-3 sm:p-6 space-y-4">
         {/* KPI cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-          <KpiCard
-            icon={<CalendarDays className="w-4 h-4" />}
-            label="Προσεχείς εκδηλώσεις"
-            value={stats.upcomingCount.toString()}
-            sub={`${stats.next30} τις επόμενες 30 ημέρες`}
-            loading={isLoading}
-          />
-          <KpiCard
-            icon={<Clock className="w-4 h-4" />}
-            label="Σήμερα / Αύριο"
-            value={(groups.today.length + (groups.week[0] && isTomorrow(groups.week[0].date) ? 1 : 0)).toString()}
-            sub={groups.today.length > 0 ? "Έχετε εκδήλωση σήμερα" : "Καμία για σήμερα"}
-            loading={isLoading}
-            highlight={groups.today.length > 0}
-          />
-          <KpiCard
-            icon={<HandHeart className="w-4 h-4" />}
-            label="Σύνολο δώρων μου"
-            value={formatEur(stats.totalGivenAmount)}
-            sub={`${givenGifts.filter((g) => !g.deleted_at).length} εγγραφές`}
-            loading={isLoading}
-          />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Stethoscope className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Σύνολο επισκέψεων</p>
+                <p className="text-2xl font-semibold">{stats.total}</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-info/10 flex items-center justify-center">
+                <CalendarDays className="h-5 w-5 text-info" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Φέτος</p>
+                <p className="text-2xl font-semibold">{stats.yearCount}</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                <Wallet className="h-5 w-5 text-warning" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Κόστος έτους</p>
+                <p className="text-2xl font-semibold">{stats.yearCost.toFixed(0)}€</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-success" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Σύνολο εξόδων</p>
+                <p className="text-2xl font-semibold">{stats.totalCost.toFixed(0)}€</p>
+              </div>
+            </div>
+          </Card>
         </div>
 
-        {/* Upcoming list */}
-        <div className="bg-card border border-border rounded-lg shadow-xs overflow-hidden">
-          <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-muted/30">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <h2 className="font-semibold text-foreground text-sm">Προσεχείς εκδηλώσεις</h2>
-              <span className="text-xs text-muted-foreground">({upcoming.length})</span>
-            </div>
-            <Link
-              to="/given"
-              className="text-xs text-primary hover:underline flex items-center gap-1"
-            >
-              Όλα τα δώρα μου <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-
-          {isLoading ? (
-            <div className="p-4 space-y-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-md" />
-              ))}
-            </div>
-          ) : upcoming.length === 0 ? (
-            <div className="text-center py-12 px-4">
-              <CalendarDays className="w-10 h-10 text-muted-foreground/60 mx-auto mb-3" />
-              <p className="text-sm font-medium text-foreground">Καμία προσεχής εκδήλωση</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Καταχωρήστε ημερομηνία στις εγγραφές «Δώρα μου» για να εμφανιστούν εδώ.
-              </p>
-              <Button variant="outline" size="sm" className="mt-4 gap-1.5" onClick={() => navigate("/given")}>
-                <HandHeart className="w-4 h-4" /> Μετάβαση στα Δώρα μου
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Upcoming appointments */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-semibold flex items-center gap-2">
+                <Clock className="h-4 w-4" /> Επόμενα ραντεβού
+              </h2>
+              <Button size="sm" variant="outline" onClick={() => setApptOpen(true)}>
+                <Plus className="h-3.5 w-3.5 mr-1" /> Νέο
               </Button>
             </div>
-          ) : (
-            <div className="divide-y divide-border">
-              <Group title="Σήμερα" items={groups.today} />
-              <Group title="Αυτή την εβδομάδα" items={groups.week} />
-              <Group title="Αυτόν τον μήνα" items={groups.month} />
-              <Group title="Αργότερα" items={groups.later} />
+            {upcoming.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                Κανένα επερχόμενο ραντεβού
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {upcoming.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center justify-between p-3 rounded-md border bg-muted/30"
+                  >
+                    <div>
+                      <p className="font-medium text-sm">{a.doctor_name || "—"}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {a.specialty} {a.reason ? `· ${a.reason}` : ""}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {format(new Date(a.appointment_date), "dd MMM, HH:mm", { locale: el })}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Link to="/appointments" className="text-xs text-primary hover:underline mt-3 inline-block">
+              Όλα τα ραντεβού →
+            </Link>
+          </Card>
+
+          {/* Recent visits */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-semibold flex items-center gap-2">
+                <Stethoscope className="h-4 w-4" /> Πρόσφατες επισκέψεις
+              </h2>
+              <Button size="sm" variant="outline" onClick={() => setVisitOpen(true)}>
+                <Plus className="h-3.5 w-3.5 mr-1" /> Νέα
+              </Button>
             </div>
-          )}
+            {recentVisits.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                Δεν έχετε καταχωρήσει επισκέψεις
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {recentVisits.map((v) => (
+                  <div key={v.id} className="flex items-center justify-between p-3 rounded-md border bg-muted/30">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-sm truncate">{v.doctor_name || v.specialty || "—"}</p>
+                      <p className="text-xs text-muted-foreground truncate">{v.reason || v.diagnosis || ""}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-mono">
+                        {format(new Date(v.visit_date), "dd/MM/yy", { locale: el })}
+                      </p>
+                      {v.cost != null && (
+                        <p className="text-xs text-muted-foreground">{v.cost.toFixed(2)}€</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Link to="/visits" className="text-xs text-primary hover:underline mt-3 inline-block">
+              Όλες οι επισκέψεις →
+            </Link>
+          </Card>
         </div>
+
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">{doctors.length} ιατροί στη λίστα σου</p>
+              <p className="text-xs text-muted-foreground">Διαχείριση από τη σελίδα Ιατροί</p>
+            </div>
+            <Link to="/doctors">
+              <Button variant="outline" size="sm">Άνοιγμα</Button>
+            </Link>
+          </div>
+        </Card>
       </div>
+
+      <VisitFormDialog open={visitOpen} onOpenChange={setVisitOpen} />
+      <AppointmentFormDialog open={apptOpen} onOpenChange={setApptOpen} />
     </AppShell>
   );
 };
-
-const Group = ({ title, items }: { title: string; items: UpcomingItem[] }) => {
-  if (items.length === 0) return null;
-  return (
-    <div>
-      <div className="px-4 py-1.5 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground bg-muted/20">
-        {title} <span className="font-normal">· {items.length}</span>
-      </div>
-      <ul>
-        {items.map((it) => (
-          <UpcomingRow key={`${it.kind}-${it.id}`} item={it} />
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const UpcomingRow = ({ item }: { item: UpcomingItem }) => {
-  const navigate = useNavigate();
-  const onClick = () => {
-    if (item.kind === "personal") navigate(`/guests?event=${item.id}`);
-    else navigate("/given");
-  };
-
-  const day = format(item.date, "d", { locale: el });
-  const month = format(item.date, "MMM", { locale: el });
-  const weekday = format(item.date, "EEEE", { locale: el });
-
-  return (
-    <li>
-      <button
-        onClick={onClick}
-        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors text-left"
-      >
-        {/* Date block */}
-        <div
-          className={cn(
-            "w-12 h-12 shrink-0 rounded-md border flex flex-col items-center justify-center leading-none",
-            item.kind === "personal"
-              ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-muted border-border text-foreground",
-          )}
-        >
-          <span className="text-[10px] uppercase tracking-wider font-semibold opacity-70">{month}</span>
-          <span className="text-lg font-bold tabular-nums">{day}</span>
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-medium text-foreground truncate">{item.title}</p>
-            {item.kind === "personal" && (
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary font-semibold">
-                Δική μου
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
-            <span className="capitalize">{weekday}</span>
-            {item.subtitle && (
-              <>
-                <span>·</span>
-                <span className="inline-flex items-center gap-1 truncate">
-                  <MapPin className="w-3 h-3 shrink-0" />
-                  {item.subtitle}
-                </span>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end gap-0.5 shrink-0">
-          <span
-            className={cn(
-              "text-xs font-semibold px-2 py-0.5 rounded-full",
-              isToday(item.date)
-                ? "bg-destructive/15 text-destructive"
-                : isTomorrow(item.date)
-                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                  : "bg-muted text-muted-foreground",
-            )}
-          >
-            {relativeLabel(item.date)}
-          </span>
-          {item.kind === "given" && item.amount != null && (
-            <span className="text-xs font-mono text-success font-semibold inline-flex items-center gap-0.5">
-              <Euro className="w-3 h-3" /> {formatEur(item.amount)}
-            </span>
-          )}
-        </div>
-      </button>
-    </li>
-  );
-};
-
-const KpiCard = ({
-  icon,
-  label,
-  value,
-  sub,
-  loading,
-  highlight,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sub?: string;
-  loading?: boolean;
-  highlight?: boolean;
-}) => (
-  <div
-    className={cn(
-      "bg-card border rounded-lg p-3 sm:p-4 shadow-xs",
-      highlight ? "border-primary/40 ring-1 ring-primary/20" : "border-border",
-    )}
-  >
-    <div className="flex items-center gap-1.5 text-muted-foreground text-xs uppercase tracking-wider font-semibold">
-      {icon}
-      <span className="truncate">{label}</span>
-    </div>
-    {loading ? (
-      <Skeleton className="h-7 w-24 mt-2" />
-    ) : (
-      <p className="text-xl sm:text-2xl font-bold text-foreground mt-1.5 tabular-nums">{value}</p>
-    )}
-    {sub && <p className="text-[11px] text-muted-foreground mt-1 truncate">{sub}</p>}
-  </div>
-);
 
 export default Dashboard;

@@ -7,7 +7,7 @@ interface AppSettings {
 }
 
 const defaultSettings: AppSettings = {
-  appName: 'Γαμπρός & Νύφη',
+  appName: 'Ιατρικές Επισκέψεις',
 };
 
 export const useAppSettings = () => {
