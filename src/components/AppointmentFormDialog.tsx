@@ -15,13 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useDoctors } from "@/hooks/useDoctors";
 import { useAppointments } from "@/hooks/useAppointments";
 import type { Appointment } from "@/types/medical";
@@ -75,12 +68,12 @@ export const AppointmentFormDialog = ({
     }
   }, [appointment, open]);
 
-  const handleDoctorChange = (id: string) => {
-    const doc = doctors.find((d) => d.id === id);
+  const handleDoctorNameChange = (name: string) => {
+    const doc = doctors.find((d) => d.name.toLowerCase() === name.toLowerCase());
     setForm((f) => ({
       ...f,
-      doctor_id: id,
-      doctor_name: doc?.name || "",
+      doctor_id: doc?.id || "",
+      doctor_name: name,
       specialty: doc?.specialty || f.specialty,
     }));
   };
@@ -114,26 +107,19 @@ export const AppointmentFormDialog = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Ιατρός</Label>
-            {doctors.length > 0 ? (
-              <Select value={form.doctor_id} onValueChange={handleDoctorChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Επιλέξτε ιατρό" />
-                </SelectTrigger>
-                <SelectContent>
-                  {doctors.map((d) => (
-                    <SelectItem key={d.id} value={d.id}>
-                      {d.name} {d.specialty ? `· ${d.specialty}` : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input
-                placeholder="Όνομα ιατρού"
-                value={form.doctor_name}
-                onChange={(e) => setForm({ ...form, doctor_name: e.target.value })}
-              />
-            )}
+            <Input
+              list="appt-doctor-list"
+              placeholder="Πληκτρολογήστε ή επιλέξτε ιατρό"
+              value={form.doctor_name}
+              onChange={(e) => handleDoctorNameChange(e.target.value)}
+            />
+            <datalist id="appt-doctor-list">
+              {doctors.map((d) => (
+                <option key={d.id} value={d.name}>
+                  {d.specialty || ""}
+                </option>
+              ))}
+            </datalist>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -163,6 +149,8 @@ export const AppointmentFormDialog = ({
               <Label>Ώρα</Label>
               <Input
                 type="time"
+                lang="el-GR"
+                step={60}
                 value={form.time}
                 onChange={(e) => setForm({ ...form, time: e.target.value })}
               />

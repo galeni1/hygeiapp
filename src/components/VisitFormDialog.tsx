@@ -15,13 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useDoctors } from "@/hooks/useDoctors";
 import { useSpecialties } from "@/hooks/useSpecialties";
 import { useVisits } from "@/hooks/useVisits";
@@ -81,12 +74,12 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
     }
   }, [visit, open]);
 
-  const handleDoctorChange = (id: string) => {
-    const doc = doctors.find((d) => d.id === id);
+  const handleDoctorNameChange = (name: string) => {
+    const doc = doctors.find((d) => d.name.toLowerCase() === name.toLowerCase());
     setForm((f) => ({
       ...f,
-      doctor_id: id,
-      doctor_name: doc?.name || "",
+      doctor_id: doc?.id || "",
+      doctor_name: name,
       specialty: doc?.specialty || f.specialty,
     }));
   };
@@ -124,26 +117,19 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Ιατρός</Label>
-              {doctors.length > 0 ? (
-                <Select value={form.doctor_id} onValueChange={handleDoctorChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Επιλέξτε ιατρό" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {doctors.map((d) => (
-                      <SelectItem key={d.id} value={d.id}>
-                        {d.name} {d.specialty ? `· ${d.specialty}` : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <Input
-                  placeholder="Όνομα ιατρού"
-                  value={form.doctor_name}
-                  onChange={(e) => setForm({ ...form, doctor_name: e.target.value })}
-                />
-              )}
+              <Input
+                list="visit-doctor-list"
+                placeholder="Πληκτρολογήστε ή επιλέξτε ιατρό"
+                value={form.doctor_name}
+                onChange={(e) => handleDoctorNameChange(e.target.value)}
+              />
+              <datalist id="visit-doctor-list">
+                {doctors.map((d) => (
+                  <option key={d.id} value={d.name}>
+                    {d.specialty || ""}
+                  </option>
+                ))}
+              </datalist>
             </div>
 
             <div className="space-y-2">
