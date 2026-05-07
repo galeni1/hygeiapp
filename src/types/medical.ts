@@ -22,6 +22,7 @@ export interface Visit {
   diagnosis: string | null;
   prescription: string | null;
   cost: number | null;
+  body_part: string | null;
   notes: string | null;
   next_appointment: string | null;
   created_at: string;
