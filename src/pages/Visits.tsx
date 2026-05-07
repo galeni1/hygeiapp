@@ -60,7 +60,7 @@ const Visits = () => {
 
   const handleExport = () => {
     const rows = filtered.map((v) => ({
-      Ημερομηνία: v.visit_date,
+      Ημερομηνία: format(new Date(v.visit_date), "dd/MM/yyyy HH:mm"),
       Ιατρός: v.doctor_name || "",
       Ειδικότητα: v.specialty || "",
       Λόγος: v.reason || "",
@@ -207,7 +207,7 @@ const Visits = () => {
                   {filtered.map((v) => (
                     <TableRow key={v.id} className="cursor-pointer" onClick={() => handleEdit(v)}>
                       <TableCell className="whitespace-nowrap font-mono text-xs">
-                        {format(new Date(v.visit_date), "dd MMM yyyy", { locale: el })}
+                        {format(new Date(v.visit_date), "dd MMM yyyy HH:mm", { locale: el })}
                       </TableCell>
                       <TableCell className="font-medium">{v.doctor_name || "—"}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
