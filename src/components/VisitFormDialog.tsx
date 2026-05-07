@@ -93,6 +93,7 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (create.isPending || update.isPending) return;
     const payload: Partial<Visit> = {
       doctor_id: form.doctor_id || null,
       doctor_name: form.doctor_name || null,
@@ -269,7 +270,9 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
               Ακύρωση
             </Button>
             <Button type="submit" disabled={create.isPending || update.isPending}>
-              {visit ? "Αποθήκευση" : "Καταχώρηση"}
+              {create.isPending || update.isPending
+                ? "Αποθήκευση..."
+                : visit ? "Αποθήκευση" : "Καταχώρηση"}
             </Button>
           </DialogFooter>
         </form>

@@ -49,6 +49,7 @@ export const DoctorFormDialog = ({ open, onOpenChange, doctor }: DoctorFormDialo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (create.isPending || update.isPending) return;
     const payload = {
       name: form.name.trim(),
       specialty: form.specialty || null,
@@ -129,7 +130,11 @@ export const DoctorFormDialog = ({ open, onOpenChange, doctor }: DoctorFormDialo
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Ακύρωση
             </Button>
-            <Button type="submit">{doctor ? "Αποθήκευση" : "Προσθήκη"}</Button>
+            <Button type="submit" disabled={create.isPending || update.isPending}>
+              {create.isPending || update.isPending
+                ? "Αποθήκευση..."
+                : doctor ? "Αποθήκευση" : "Προσθήκη"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
