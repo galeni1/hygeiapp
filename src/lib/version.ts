@@ -1,2 +1,2 @@
-// App version — increments by 0.01 on every change
-export const APP_VERSION = "v0.09";
+// App version
+export const APP_VERSION = "v1.00";
