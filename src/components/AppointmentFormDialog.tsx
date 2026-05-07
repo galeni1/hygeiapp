@@ -87,6 +87,7 @@ export const AppointmentFormDialog = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (create.isPending || update.isPending) return;
     const dt = new Date(`${form.date}T${form.time}:00`);
     const payload: Partial<Appointment> = {
       doctor_id: form.doctor_id || null,
@@ -189,7 +190,11 @@ export const AppointmentFormDialog = ({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Ακύρωση
             </Button>
-            <Button type="submit">{appointment ? "Αποθήκευση" : "Καταχώρηση"}</Button>
+            <Button type="submit" disabled={create.isPending || update.isPending}>
+              {create.isPending || update.isPending
+                ? "Αποθήκευση..."
+                : appointment ? "Αποθήκευση" : "Καταχώρηση"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
