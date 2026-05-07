@@ -19,8 +19,7 @@ import { useDoctors } from "@/hooks/useDoctors";
 import { DoctorFormDialog } from "@/components/DoctorFormDialog";
 import type { Doctor } from "@/types/medical";
 
-const normalize = (s: string) =>
-  s?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+import { smartMatchAny } from "@/lib/search";
 
 const Doctors = () => {
   const { data: doctors = [], isLoading, remove } = useDoctors();
@@ -31,11 +30,8 @@ const Doctors = () => {
 
   const filtered = useMemo(() => {
     if (!search) return doctors;
-    const q = normalize(search);
     return doctors.filter((d) =>
-      [d.name, d.specialty, d.phone, d.email, d.address]
-        .filter(Boolean)
-        .some((f) => normalize(f as string).includes(q))
+      smartMatchAny([d.name, d.specialty, d.phone, d.email, d.address, d.notes], search)
     );
   }, [doctors, search]);
 

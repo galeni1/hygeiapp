@@ -35,7 +35,8 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
     doctor_id: "",
     doctor_name: "",
     specialty: "",
-    visit_date: new Date().toISOString().slice(0, 10),
+    visit_date: format(new Date(), "yyyy-MM-dd"),
+    visit_time: format(new Date(), "HH:mm"),
     reason: "",
     diagnosis: "",
     prescription: "",
@@ -46,11 +47,13 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
 
   useEffect(() => {
     if (visit) {
+      const d = new Date(visit.visit_date);
       setForm({
         doctor_id: visit.doctor_id || "",
         doctor_name: visit.doctor_name || "",
         specialty: visit.specialty || "",
-        visit_date: visit.visit_date,
+        visit_date: format(d, "yyyy-MM-dd"),
+        visit_time: format(d, "HH:mm"),
         reason: visit.reason || "",
         diagnosis: visit.diagnosis || "",
         prescription: visit.prescription || "",
@@ -59,11 +62,13 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
         next_appointment: visit.next_appointment || "",
       });
     } else {
+      const now = new Date();
       setForm({
         doctor_id: "",
         doctor_name: "",
         specialty: "",
-        visit_date: new Date().toISOString().slice(0, 10),
+        visit_date: format(now, "yyyy-MM-dd"),
+        visit_time: format(now, "HH:mm"),
         reason: "",
         diagnosis: "",
         prescription: "",
@@ -91,7 +96,7 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
       doctor_id: form.doctor_id || null,
       doctor_name: form.doctor_name || null,
       specialty: form.specialty || null,
-      visit_date: form.visit_date,
+      visit_date: new Date(`${form.visit_date}T${form.visit_time}:00`).toISOString(),
       reason: form.reason || null,
       diagnosis: form.diagnosis || null,
       prescription: form.prescription || null,
@@ -171,6 +176,17 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
                   />
                 </PopoverContent>
               </Popover>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Ώρα</Label>
+              <Input
+                type="time"
+                lang="el-GR"
+                step={60}
+                value={form.visit_time}
+                onChange={(e) => setForm({ ...form, visit_time: e.target.value })}
+              />
             </div>
 
             <div className="space-y-2">

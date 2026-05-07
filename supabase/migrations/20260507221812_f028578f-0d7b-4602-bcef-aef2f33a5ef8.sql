@@ -1,0 +1,1 @@
+ALTER TABLE public.visits ALTER COLUMN visit_date TYPE timestamptz USING visit_date::timestamptz;

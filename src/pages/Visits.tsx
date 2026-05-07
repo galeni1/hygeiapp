@@ -29,12 +29,7 @@ import { useVisits } from "@/hooks/useVisits";
 import { VisitFormDialog } from "@/components/VisitFormDialog";
 import type { Visit } from "@/types/medical";
 import { toast } from "sonner";
-
-const normalize = (s: string) =>
-  s
-    ?.toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") || "";
+import { smartMatchAny, normalize } from "@/lib/search";
 
 const Visits = () => {
   const { data: visits = [], isLoading, remove, bulkInsert } = useVisits();
@@ -45,11 +40,11 @@ const Visits = () => {
 
   const filtered = useMemo(() => {
     if (!search) return visits;
-    const q = normalize(search);
     return visits.filter((v) =>
-      [v.doctor_name, v.specialty, v.reason, v.diagnosis, v.prescription, v.notes]
-        .filter(Boolean)
-        .some((field) => normalize(field as string).includes(q))
+      smartMatchAny(
+        [v.doctor_name, v.specialty, v.reason, v.diagnosis, v.prescription, v.notes],
+        search
+      )
     );
   }, [visits, search]);
 
@@ -65,7 +60,7 @@ const Visits = () => {
 
   const handleExport = () => {
     const rows = filtered.map((v) => ({
-      Ημερομηνία: v.visit_date,
+      Ημερομηνία: format(new Date(v.visit_date), "dd/MM/yyyy HH:mm"),
       Ιατρός: v.doctor_name || "",
       Ειδικότητα: v.specialty || "",
       Λόγος: v.reason || "",
@@ -212,7 +207,7 @@ const Visits = () => {
                   {filtered.map((v) => (
                     <TableRow key={v.id} className="cursor-pointer" onClick={() => handleEdit(v)}>
                       <TableCell className="whitespace-nowrap font-mono text-xs">
-                        {format(new Date(v.visit_date), "dd MMM yyyy", { locale: el })}
+                        {format(new Date(v.visit_date), "dd MMM yyyy HH:mm", { locale: el })}
                       </TableCell>
                       <TableCell className="font-medium">{v.doctor_name || "—"}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
