@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { TimeInput24 } from "@/components/ui/time-input-24";
 import { useDoctors } from "@/hooks/useDoctors";
 import { useSpecialties } from "@/hooks/useSpecialties";
 import { useVisits } from "@/hooks/useVisits";
@@ -180,12 +181,9 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
 
             <div className="space-y-2">
               <Label>Ώρα</Label>
-              <Input
-                type="time"
-                lang="el-GR"
-                step={60}
+              <TimeInput24
                 value={form.visit_time}
-                onChange={(e) => setForm({ ...form, visit_time: e.target.value })}
+                onChange={(v) => setForm({ ...form, visit_time: v })}
               />
             </div>
 
