@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
 import { el } from "date-fns/locale";
-import { Plus, Pencil, Trash2, Search, FileDown, FileUp, Stethoscope } from "lucide-react";
+import { Plus, Search, FileDown, FileUp, Stethoscope } from "lucide-react";
 import * as XLSX from "xlsx";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -15,16 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useVisits } from "@/hooks/useVisits";
 import { VisitFormDialog } from "@/components/VisitFormDialog";
 import type { Visit } from "@/types/medical";
@@ -32,11 +22,10 @@ import { toast } from "sonner";
 import { smartMatchAny, normalize } from "@/lib/search";
 
 const Visits = () => {
-  const { data: visits = [], isLoading, remove, bulkInsert } = useVisits();
+  const { data: visits = [], isLoading, bulkInsert } = useVisits();
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Visit | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<Visit | null>(null);
 
   const filtered = useMemo(() => {
     if (!search) return visits;
@@ -231,29 +220,6 @@ const Visits = () => {
       </div>
 
       <VisitFormDialog open={formOpen} onOpenChange={setFormOpen} visit={editing} />
-
-      <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Διαγραφή επίσκεψης;</AlertDialogTitle>
-            <AlertDialogDescription>
-              Η ενέργεια δεν μπορεί να αναιρεθεί.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Ακύρωση</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground"
-              onClick={async () => {
-                if (confirmDelete) await remove.mutateAsync(confirmDelete.id);
-                setConfirmDelete(null);
-              }}
-            >
-              Διαγραφή
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </AppShell>
   );
 };
