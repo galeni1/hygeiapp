@@ -15,13 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useDoctors } from "@/hooks/useDoctors";
 import { useSpecialties } from "@/hooks/useSpecialties";
 import { useVisits } from "@/hooks/useVisits";
