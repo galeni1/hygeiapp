@@ -179,6 +179,17 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
             </div>
 
             <div className="space-y-2">
+              <Label>Ώρα</Label>
+              <Input
+                type="time"
+                lang="el-GR"
+                step={60}
+                value={form.visit_time}
+                onChange={(e) => setForm({ ...form, visit_time: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label>Κόστος (€)</Label>
               <Input
                 type="number"
