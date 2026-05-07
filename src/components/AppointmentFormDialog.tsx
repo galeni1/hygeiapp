@@ -147,12 +147,9 @@ export const AppointmentFormDialog = ({
             </div>
             <div className="space-y-2">
               <Label>Ώρα</Label>
-              <Input
-                type="time"
-                lang="el-GR"
-                step={60}
+              <TimeInput24
                 value={form.time}
-                onChange={(e) => setForm({ ...form, time: e.target.value })}
+                onChange={(v) => setForm({ ...form, time: v })}
               />
             </div>
           </div>
