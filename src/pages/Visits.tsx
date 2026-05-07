@@ -29,12 +29,7 @@ import { useVisits } from "@/hooks/useVisits";
 import { VisitFormDialog } from "@/components/VisitFormDialog";
 import type { Visit } from "@/types/medical";
 import { toast } from "sonner";
-
-const normalize = (s: string) =>
-  s
-    ?.toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") || "";
+import { smartMatchAny, normalize } from "@/lib/search";
 
 const Visits = () => {
   const { data: visits = [], isLoading, remove, bulkInsert } = useVisits();
@@ -45,11 +40,11 @@ const Visits = () => {
 
   const filtered = useMemo(() => {
     if (!search) return visits;
-    const q = normalize(search);
     return visits.filter((v) =>
-      [v.doctor_name, v.specialty, v.reason, v.diagnosis, v.prescription, v.notes]
-        .filter(Boolean)
-        .some((field) => normalize(field as string).includes(q))
+      smartMatchAny(
+        [v.doctor_name, v.specialty, v.reason, v.diagnosis, v.prescription, v.notes],
+        search
+      )
     );
   }, [visits, search]);
 
