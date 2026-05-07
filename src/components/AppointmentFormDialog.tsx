@@ -75,12 +75,12 @@ export const AppointmentFormDialog = ({
     }
   }, [appointment, open]);
 
-  const handleDoctorChange = (id: string) => {
-    const doc = doctors.find((d) => d.id === id);
+  const handleDoctorNameChange = (name: string) => {
+    const doc = doctors.find((d) => d.name.toLowerCase() === name.toLowerCase());
     setForm((f) => ({
       ...f,
-      doctor_id: id,
-      doctor_name: doc?.name || "",
+      doctor_id: doc?.id || "",
+      doctor_name: name,
       specialty: doc?.specialty || f.specialty,
     }));
   };
