@@ -14,241 +14,177 @@ export type Database = {
   }
   public: {
     Tables: {
-      gift_history: {
+      appointments: {
         Row: {
-          action: Database["public"]["Enums"]["gift_history_action"]
-          changes: Json | null
+          appointment_date: string
+          completed: boolean
           created_at: string
-          entity_type: string
-          gift_id: string
+          doctor_id: string | null
+          doctor_name: string | null
           id: string
-          snapshot: Json | null
-          user_id: string
-        }
-        Insert: {
-          action: Database["public"]["Enums"]["gift_history_action"]
-          changes?: Json | null
-          created_at?: string
-          entity_type?: string
-          gift_id: string
-          id?: string
-          snapshot?: Json | null
-          user_id: string
-        }
-        Update: {
-          action?: Database["public"]["Enums"]["gift_history_action"]
-          changes?: Json | null
-          created_at?: string
-          entity_type?: string
-          gift_id?: string
-          id?: string
-          snapshot?: Json | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      gift_sources: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      given_event_types: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      given_gifts: {
-        Row: {
-          created_at: string
-          deleted_at: string | null
-          details: string | null
-          event_date: string | null
-          event_type: string | null
-          father_name: string | null
-          first_name: string
-          gift_amount: number | null
-          id: string
-          nickname: string | null
-          number: number | null
-          relationship: string | null
-          surname: string
-          updated_at: string
-          user_id: string
-          village: string | null
-        }
-        Insert: {
-          created_at?: string
-          deleted_at?: string | null
-          details?: string | null
-          event_date?: string | null
-          event_type?: string | null
-          father_name?: string | null
-          first_name: string
-          gift_amount?: number | null
-          id?: string
-          nickname?: string | null
-          number?: number | null
-          relationship?: string | null
-          surname: string
-          updated_at?: string
-          user_id: string
-          village?: string | null
-        }
-        Update: {
-          created_at?: string
-          deleted_at?: string | null
-          details?: string | null
-          event_date?: string | null
-          event_type?: string | null
-          father_name?: string | null
-          first_name?: string
-          gift_amount?: number | null
-          id?: string
-          nickname?: string | null
-          number?: number | null
-          relationship?: string | null
-          surname?: string
-          updated_at?: string
-          user_id?: string
-          village?: string | null
-        }
-        Relationships: []
-      }
-      personal_events: {
-        Row: {
-          created_at: string
-          event_date: string | null
-          event_type: string | null
-          id: string
-          name: string
           notes: string | null
+          reason: string | null
+          specialty: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          appointment_date: string
+          completed?: boolean
           created_at?: string
-          event_date?: string | null
-          event_type?: string | null
+          doctor_id?: string | null
+          doctor_name?: string | null
           id?: string
-          name: string
           notes?: string | null
+          reason?: string | null
+          specialty?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          appointment_date?: string
+          completed?: boolean
           created_at?: string
-          event_date?: string | null
-          event_type?: string | null
+          doctor_id?: string | null
+          doctor_name?: string | null
           id?: string
-          name?: string
           notes?: string | null
+          reason?: string | null
+          specialty?: string | null
           updated_at?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      wedding_gifts: {
-        Row: {
-          created_at: string
-          deleted_at: string | null
-          details: string | null
-          event_id: string | null
-          father_name: string | null
-          first_name: string
-          gift_amount: number | null
-          guest_type: string | null
-          id: string
-          nickname: string | null
-          number: number | null
-          responsible: string | null
-          source: string | null
-          surname: string
-          updated_at: string
-          user_id: string | null
-          village: string | null
-        }
-        Insert: {
-          created_at?: string
-          deleted_at?: string | null
-          details?: string | null
-          event_id?: string | null
-          father_name?: string | null
-          first_name: string
-          gift_amount?: number | null
-          guest_type?: string | null
-          id?: string
-          nickname?: string | null
-          number?: number | null
-          responsible?: string | null
-          source?: string | null
-          surname: string
-          updated_at?: string
-          user_id?: string | null
-          village?: string | null
-        }
-        Update: {
-          created_at?: string
-          deleted_at?: string | null
-          details?: string | null
-          event_id?: string | null
-          father_name?: string | null
-          first_name?: string
-          gift_amount?: number | null
-          guest_type?: string | null
-          id?: string
-          nickname?: string | null
-          number?: number | null
-          responsible?: string | null
-          source?: string | null
-          surname?: string
-          updated_at?: string
-          user_id?: string | null
-          village?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "wedding_gifts_event_id_fkey"
-            columns: ["event_id"]
+            foreignKeyName: "appointments_doctor_id_fkey"
+            columns: ["doctor_id"]
             isOneToOne: false
-            referencedRelation: "personal_events"
+            referencedRelation: "doctors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doctors: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          specialty: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      specialties: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      visits: {
+        Row: {
+          cost: number | null
+          created_at: string
+          deleted_at: string | null
+          diagnosis: string | null
+          doctor_id: string | null
+          doctor_name: string | null
+          id: string
+          next_appointment: string | null
+          notes: string | null
+          prescription: string | null
+          reason: string | null
+          specialty: string | null
+          updated_at: string
+          user_id: string
+          visit_date: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          deleted_at?: string | null
+          diagnosis?: string | null
+          doctor_id?: string | null
+          doctor_name?: string | null
+          id?: string
+          next_appointment?: string | null
+          notes?: string | null
+          prescription?: string | null
+          reason?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id: string
+          visit_date?: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          deleted_at?: string | null
+          diagnosis?: string | null
+          doctor_id?: string | null
+          doctor_name?: string | null
+          id?: string
+          next_appointment?: string | null
+          notes?: string | null
+          prescription?: string | null
+          reason?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id?: string
+          visit_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visits_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctors"
             referencedColumns: ["id"]
           },
         ]
@@ -261,12 +197,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      gift_history_action:
-        | "create"
-        | "update"
-        | "delete"
-        | "restore"
-        | "permanent_delete"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -393,14 +324,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      gift_history_action: [
-        "create",
-        "update",
-        "delete",
-        "restore",
-        "permanent_delete",
-      ],
-    },
+    Enums: {},
   },
 } as const
