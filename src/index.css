@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&family=JetBrains+Mono:wght@500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ERP Professional Light - inspired by galenizervos */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --brand-wine: 350 70% 28%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 217 91% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 217 91% 60%;
+
+    --secondary: 210 16% 93%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 16% 95%;
+    --muted-foreground: 215 16% 42%;
+
+    --accent: 217 91% 95%;
+    --accent-foreground: 217 91% 30%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 38%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 217 91% 45%;
+
+    --radius: 0.5rem;
+
+    /* Surface elevations */
+    --surface-1: 210 20% 98%;
+    --surface-2: 210 16% 95%;
+    --surface-3: 0 0% 100%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 45%), hsl(217 91% 55%));
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 hsl(222 47% 11% / 0.04);
+    --shadow-sm: 0 1px 3px 0 hsl(222 47% 11% / 0.06), 0 1px 2px 0 hsl(222 47% 11% / 0.04);
+    --shadow-md: 0 4px 8px -2px hsl(222 47% 11% / 0.08), 0 2px 4px -2px hsl(222 47% 11% / 0.04);
+    --shadow-lg: 0 12px 24px -6px hsl(222 47% 11% / 0.12), 0 4px 8px -2px hsl(222 47% 11% / 0.06);
+
+    /* Fonts */
+    --font-display: 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 20% 88%;
+    --sidebar-primary: 217 91% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 40% 17%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 40% 17%;
+    --sidebar-ring: 217 91% 55%;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 0%;
+    --primary-glow: 217 91% 70%;
+
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 96%;
+
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 217 91% 20%;
+    --accent-foreground: 217 91% 80%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 55%;
+    --info: 199 89% 55%;
+
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 217 91% 60%;
+
+    --surface-1: 0 0% 0%;
+    --surface-2: 0 0% 5%;
+    --surface-3: 0 0% 8%;
+
+    --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.5);
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.6);
+    --shadow-md: 0 4px 8px -2px hsl(0 0% 0% / 0.7);
+    --shadow-lg: 0 12px 24px -6px hsl(0 0% 0% / 0.8);
+
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 88%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 7%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 40% 13%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply tracking-tight;
+  }
+
+  /* Better scrollbars */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--muted)); }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-body { font-family: var(--font-body); }
+  .font-mono { font-family: var(--font-mono); }
+
+  .bg-gradient-primary { background-image: var(--gradient-primary); }
+  .bg-gradient-surface { background-image: var(--gradient-surface); }
+
+  .shadow-xs { box-shadow: var(--shadow-xs); }
+  .shadow-sm-erp { box-shadow: var(--shadow-sm); }
+  .shadow-md-erp { box-shadow: var(--shadow-md); }
+  .shadow-lg-erp { box-shadow: var(--shadow-lg); }
+
+  .text-success { color: hsl(var(--success)); }
+  .bg-success { background-color: hsl(var(--success)); }
+  .text-warning { color: hsl(var(--warning)); }
+  .bg-warning { background-color: hsl(var(--warning)); }
+  .text-info { color: hsl(var(--info)); }
+  .bg-info { background-color: hsl(var(--info)); }
+
+  .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Safe area for mobile bottom nav */
+  .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+}
+
+@media print {
+  @page { margin: 10mm; size: auto; }
+  /* Κρύβει UI που δε χρειάζεται στην εκτύπωση */
+  header, nav, aside, .print\:hidden { display: none !important; }
+  /* Κρύβει την πρώτη στήλη (checkboxes) σε όλους τους πίνακες κατά την εκτύπωση */
+  table thead tr th:first-child,
+  table tbody tr td:first-child { display: none !important; }
+  /* Εμφάνισε όλες τις στήλες, ακόμα κι αυτές που είναι hidden σε mobile */
+  .hidden.md\:table-cell,
+  .hidden.lg\:table-cell,
+  .hidden.xl\:table-cell { display: table-cell !important; }
+  /* Καθαρό background για εκτύπωση */
+  body { background: white !important; }
+  .bg-card, .bg-muted, .bg-muted\/20, .bg-muted\/30, .bg-muted\/40, .bg-muted\/60 {
+    background: white !important;
+  }
+  .shadow-xs, .shadow-sm-erp, .shadow-md-erp, .shadow-lg-erp { box-shadow: none !important; }
+}
