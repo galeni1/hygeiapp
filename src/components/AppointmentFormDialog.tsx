@@ -114,26 +114,19 @@ export const AppointmentFormDialog = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Ιατρός</Label>
-            {doctors.length > 0 ? (
-              <Select value={form.doctor_id} onValueChange={handleDoctorChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Επιλέξτε ιατρό" />
-                </SelectTrigger>
-                <SelectContent>
-                  {doctors.map((d) => (
-                    <SelectItem key={d.id} value={d.id}>
-                      {d.name} {d.specialty ? `· ${d.specialty}` : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input
-                placeholder="Όνομα ιατρού"
-                value={form.doctor_name}
-                onChange={(e) => setForm({ ...form, doctor_name: e.target.value })}
-              />
-            )}
+            <Input
+              list="appt-doctor-list"
+              placeholder="Πληκτρολογήστε ή επιλέξτε ιατρό"
+              value={form.doctor_name}
+              onChange={(e) => handleDoctorNameChange(e.target.value)}
+            />
+            <datalist id="appt-doctor-list">
+              {doctors.map((d) => (
+                <option key={d.id} value={d.name}>
+                  {d.specialty || ""}
+                </option>
+              ))}
+            </datalist>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
