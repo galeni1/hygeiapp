@@ -200,7 +200,6 @@ const Visits = () => {
                     <TableHead className="hidden lg:table-cell">Λόγος</TableHead>
                     <TableHead className="hidden lg:table-cell">Διάγνωση</TableHead>
                     <TableHead className="text-right">Κόστος</TableHead>
-                    <TableHead className="w-20"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
