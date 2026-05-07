@@ -15,13 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useDoctors } from "@/hooks/useDoctors";
 import { useAppointments } from "@/hooks/useAppointments";
 import type { Appointment } from "@/types/medical";
@@ -156,6 +149,8 @@ export const AppointmentFormDialog = ({
               <Label>Ώρα</Label>
               <Input
                 type="time"
+                lang="el-GR"
+                step={60}
                 value={form.time}
                 onChange={(e) => setForm({ ...form, time: e.target.value })}
               />
