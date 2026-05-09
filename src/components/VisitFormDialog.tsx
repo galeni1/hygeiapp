@@ -30,6 +30,7 @@ import { useDoctors } from "@/hooks/useDoctors";
 import { useSpecialties } from "@/hooks/useSpecialties";
 import { useVisits } from "@/hooks/useVisits";
 import type { Visit } from "@/types/medical";
+import { smartMatch } from "@/lib/search";
 
 interface VisitFormDialogProps {
   open: boolean;
@@ -44,6 +45,7 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
 
   const [readOnly, setReadOnly] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [bodyPartFocused, setBodyPartFocused] = useState(false);
 
   const bodyParts = useMemo(() => {
     const set = new Set<string>();
@@ -234,17 +236,42 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
 
                 <div className="space-y-2 sm:col-span-2">
                   <Label>Όργανο προς εξέταση</Label>
-                  <Input
-                    list="body-part-list"
-                    value={form.body_part}
-                    onChange={(e) => setForm({ ...form, body_part: e.target.value })}
-                    placeholder="π.χ. γόνατο αριστερά"
-                  />
-                  <datalist id="body-part-list">
-                    {bodyParts.map((b) => (
-                      <option key={b} value={b} />
-                    ))}
-                  </datalist>
+                  <div className="relative">
+                    <Input
+                      value={form.body_part}
+                      onChange={(e) => setForm({ ...form, body_part: e.target.value })}
+                      onFocus={() => setBodyPartFocused(true)}
+                      onBlur={() => setTimeout(() => setBodyPartFocused(false), 150)}
+                      placeholder="π.χ. γόνατο αριστερά"
+                      autoComplete="off"
+                    />
+                    {bodyPartFocused && !disabled && (() => {
+                      const suggestions = bodyParts.filter(
+                        (b) =>
+                          smartMatch(b, form.body_part) &&
+                          b.toLowerCase() !== form.body_part.toLowerCase()
+                      );
+                      if (suggestions.length === 0) return null;
+                      return (
+                        <div className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto">
+                          {suggestions.map((b) => (
+                            <button
+                              key={b}
+                              type="button"
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                setForm({ ...form, body_part: b });
+                                setBodyPartFocused(false);
+                              }}
+                            >
+                              {b}
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
