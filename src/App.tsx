@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import Visits from "./pages/Visits";
+import Symptoms from "./pages/Symptoms";
 import Doctors from "./pages/Doctors";
 import Appointments from "./pages/Appointments";
 import Stats from "./pages/Stats";
