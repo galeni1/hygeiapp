@@ -77,22 +77,6 @@ const Auth = () => {
     }
     setLoading(false);
   };
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: window.location.origin,
-      extraParams: {
-        prompt: 'select_account',
-      },
-    });
-    if (result.error) {
-      toast.error('Σφάλμα σύνδεσης με Google');
-      setLoading(false);
-      return;
-    }
-    if (result.redirected) return;
-    navigate('/');
-  };
 
   if (showForgotPassword) {
     return (
