@@ -17,6 +17,7 @@ import {
   CalendarClock,
   UserRound,
   Activity,
+  PersonStanding,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -39,6 +40,7 @@ const navItems = [
   { to: "/symptoms", label: "Συμπτώματα", icon: Activity },
   { to: "/appointments", label: "Ραντεβού", icon: CalendarClock },
   { to: "/doctors", label: "Ιατροί", icon: UserRound },
+  { to: "/body", label: "Ιστορικό σώματος", icon: PersonStanding },
   { to: "/stats", label: "Στατιστικά", icon: BarChart3 },
   { to: "/settings", label: "Ρυθμίσεις", icon: SettingsIcon },
 ];
