@@ -160,11 +160,8 @@ export const VisitFormDialog = ({ open, onOpenChange, visit }: VisitFormDialogPr
               {visit ? (readOnly ? "Προβολή επίσκεψης" : "Επεξεργασία επίσκεψης") : "Νέα επίσκεψη"}
             </DialogTitle>
           </DialogHeader>
-          <form
-            onSubmit={handleSubmit}
-            className={cn("space-y-4", disabled && "opacity-60")}
-          >
-            <fieldset disabled={disabled} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <fieldset disabled={disabled} className={cn("space-y-4", disabled && "opacity-60")}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Ιατρός</Label>
