@@ -16,6 +16,7 @@ import {
   Stethoscope,
   CalendarClock,
   UserRound,
+  Activity,
 } from "lucide-react";
 import {
   DropdownMenu,
