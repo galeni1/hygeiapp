@@ -44,6 +44,19 @@ export interface Appointment {
   updated_at: string;
 }
 
+export interface Symptom {
+  id: string;
+  user_id: string;
+  observed_date: string;
+  body_part: string | null;
+  description: string;
+  severity: number | null;
+  notes: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Specialty {
   id: string;
   user_id: string;

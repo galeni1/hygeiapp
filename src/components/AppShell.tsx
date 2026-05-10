@@ -16,6 +16,7 @@ import {
   Stethoscope,
   CalendarClock,
   UserRound,
+  Activity,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -35,6 +36,7 @@ interface AppShellProps {
 const navItems = [
   { to: "/", label: "Πίνακας ελέγχου", icon: LayoutDashboard },
   { to: "/visits", label: "Επισκέψεις", icon: Stethoscope },
+  { to: "/symptoms", label: "Συμπτώματα", icon: Activity },
   { to: "/appointments", label: "Ραντεβού", icon: CalendarClock },
   { to: "/doctors", label: "Ιατροί", icon: UserRound },
   { to: "/stats", label: "Στατιστικά", icon: BarChart3 },

@@ -127,6 +127,45 @@ export type Database = {
         }
         Relationships: []
       }
+      symptoms: {
+        Row: {
+          body_part: string | null
+          created_at: string
+          description: string
+          id: string
+          notes: string | null
+          observed_date: string
+          resolved_at: string | null
+          severity: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body_part?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          notes?: string | null
+          observed_date?: string
+          resolved_at?: string | null
+          severity?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body_part?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          notes?: string | null
+          observed_date?: string
+          resolved_at?: string | null
+          severity?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       visits: {
         Row: {
           body_part: string | null
