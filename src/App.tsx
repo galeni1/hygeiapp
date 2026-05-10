@@ -10,6 +10,7 @@ import Symptoms from "./pages/Symptoms";
 import Doctors from "./pages/Doctors";
 import Appointments from "./pages/Appointments";
 import Stats from "./pages/Stats";
+import BodyHistory from "./pages/BodyHistory";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const AppRoutes = () => (
     <Route path="/symptoms" element={<ProtectedRoute><Symptoms /></ProtectedRoute>} />
     <Route path="/doctors" element={<ProtectedRoute><Doctors /></ProtectedRoute>} />
     <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
+    <Route path="/body" element={<ProtectedRoute><BodyHistory /></ProtectedRoute>} />
     <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
